@@ -2,18 +2,22 @@ import java.util.Scanner;
 
 class Empregado {
 	
-	String nome;
-	String endereco;
-	int tipo;	 //1 - assalariado / 2 - horista / 3 - comissionado
-	int recebimento; 	//1 - cheque pelos correios / 2 - cheque em maos / 3 - deposito em conta bancaria
-	double salarioFixo; 	//para assalariados e comissionados
-	double salarioHora; 	//para horistas
-	double comissao; 	//para comissionados
-	double salarioTotal; 	//guarda o salario final do empregado, considerando horas/comissoes
-	double taxaSindicato; 	//se o empregado for associado ao sindicato, este atributo sera diferente de zero
-	double impostos; 	//impostos gerais aplicados a todos os empregados
+	public String nome;
+	public String endereco;
 	
-	int contadorDeSextas; 	//usado para contar as sextas que se passam ate o comissionado receber
+	public int tipo;	 //1 - assalariado / 2 - horista / 3 - comissionado
+	public int recebimento; 	//1 - cheque pelos correios / 2 - cheque em maos / 3 - deposito em conta bancaria
+	
+	public double salarioFixo; 	//para assalariados e comissionados
+	public double salarioHora; 	//para horistas
+	public double comissao; 	//para comissionados
+	
+	public double salarioTotal; 	//guarda o salario final do empregado, considerando horas/comissoes
+	
+	public double taxaSindicato; 	//se o empregado for associado ao sindicato, este atributo sera diferente de zero
+	public double impostos; 	//impostos gerais aplicados a todos os empregados
+	
+	public int contadorDeSextas; 	//usado para contar as sextas que se passam ate o comissionado receber
 	
 }
 
@@ -23,6 +27,42 @@ public class FolhaDePagamento {
 	static int dataDeRecebimento; 	//guarda a data na qual os assalariados receberao (ultimo dia util do mes)
 	
 	//um metodo para cada pagamento (horista, assalariado e comissionado)
+	
+	static void dataAtual() {
+		System.out.print("Data atual: ");
+		
+		switch(semana) {
+			case 1:
+				System.out.print("domingo, ");
+				break;
+			
+			case 2:
+				System.out.print("segunda-feira, ");
+				break;
+				
+			case 3:
+				System.out.print("terça-feira, ");
+				break;
+				
+			case 4:
+				System.out.print("quarta-feira, ");
+				break;
+				
+			case 5:
+				System.out.print("quinta-feira, ");
+				break;
+				
+			case 6:
+				System.out.print("sexta-feira, ");
+				break;
+				
+			case 7:
+				System.out.print("sábado, ");
+				break;
+		}
+		
+		System.out.printf("%d/%d/%d\n", dia, mes, ano);
+	}
 	
 	static void ultimoDiaUtil() {
 		
@@ -55,38 +95,111 @@ public class FolhaDePagamento {
 	
 	static void configuracaoInicial() {
 		
-		System.out.println("Antes de começar, informe a data atual:");
-		System.out.println("");
+		System.out.println("Antes de começar, informe a data atual:\n");
 		
 		System.out.print("Dia: ");
 		Scanner scanner = new Scanner(System.in);
 		dia = scanner.nextInt();
 		
-		System.out.println("");
-		System.out.println("Mês: (utilize o número correspondente: 1-Jan/2-Fev/3-Mar/4-Abr/5-Mai/6-Jun/7-Jul/8-Ago/9-Set/10-Out/11-Nov/12-Dez)");
+		System.out.print("\nMês (utilize o número correspondente: 1-Jan/2-Fev/3-Mar/4-Abr/5-Mai/6-Jun/7-Jul/8-Ago/9-Set/10-Out/11-Nov/12-Dez): ");
 		mes = scanner.nextInt();
 		
-		System.out.println("");
-		System.out.print("Ano: ");
+		System.out.print("\nAno: ");
 		ano = scanner.nextInt();
 		
-		System.out.println("");
-		System.out.println("Dia da semana: (utilize o número correspondente: 1-Dom/2-Seg/3-Ter/4-Qua/5-Qui/6-Sex/7-Sáb)");
+		System.out.print("\nDia da semana (utilize o número correspondente: 1-Dom/2-Seg/3-Ter/4-Qua/5-Qui/6-Sex/7-Sáb): ");
 		semana = scanner.nextInt();
 		
-		if(scanner != null) {
-			scanner.close();
+		System.out.println("\nConfiguração concluída com sucesso!\n");
+		
+		dataAtual();
+		
+	}
+	
+	static Empregado[] adicionarEmpregado(Empregado[] vetor) {
+		
+		int i = 0;
+		
+		while(vetor[i].nome != null && i < 50) {
+			i++;
 		}
 		
-		System.out.println("");
-		System.out.println("Configuração concluída com sucesso!");
-		System.out.println("");
+		if(i == 50) {
+			System.out.println("Não há vagas!");
+			return vetor;
+		}
 		
+		Scanner scanner = new Scanner(System.in);
+		
+		System.out.print("Nome: ");
+		vetor[i].nome = scanner.nextLine();	
+		System.out.print("Endereço: ");
+		vetor[i].endereco = scanner.nextLine();
+		System.out.print("Tipo de Pagamento (1-assalariado /2-horista /3-comissionado): ");
+		vetor[i].tipo = scanner.nextInt();
+		
+		switch(vetor[i].tipo) {
+			case 1:
+				System.out.print("Salário mensal do funcionário: ");
+				vetor[i].salarioFixo = scanner.nextInt();
+				break;	
+			case 2:
+				System.out.print("Salário por hora: ");
+				vetor[i].salarioHora = scanner.nextInt();
+				break;
+			case 3:
+				System.out.print("Taxa de comissão sobre vendas (em %): ");
+				vetor[i].comissao = scanner.nextInt();
+				break;		
+		}
+		
+		System.out.print("Forma de Recebimento (1-cheque pelos correios /2-cheque em maos /3-deposito em conta bancaria): ");
+		vetor[i].recebimento = scanner.nextInt();
+		System.out.print("Deseja afiliar-se ao Sindicato, mediante taxa de 8% ao mês (1-Sim /2-Não): ");
+		int sindicato = scanner.nextInt();
+		
+		switch(sindicato) {
+			case 1:
+				vetor[i].taxaSindicato = 8;
+				break;
+			case 2:
+				vetor[i].taxaSindicato = 0;
+				break;
+		}
+		
+		vetor[i].salarioTotal = 0;
+		vetor[i].impostos = 7;
+		vetor[i].contadorDeSextas = 0;
+		
+		System.out.printf("\nFuncionário %s cadastrado com sucesso! Sua ID é %d (guarde este número!).\n", vetor[i].nome, i);
+		
+		return vetor;
+	}
+	
+	static Empregado[] removerEmpregado(Empregado[] vetor, int id) {
+		
+		System.out.printf("\nFuncionário %s removido!\n", vetor[id].nome);
+		
+		vetor[id].nome = null;
+		vetor[id].endereco = null;
+		vetor[id].tipo = 0;
+		vetor[id].recebimento = 0;
+		vetor[id].salarioFixo = 0;
+		vetor[id].salarioHora = 0;
+		vetor[id].comissao = 0;
+		vetor[id].salarioTotal = 0;
+		vetor[id].taxaSindicato = 0;
+		vetor[id].impostos = 0;
+		vetor[id].contadorDeSextas = 0;
+		
+		return vetor;
 	}
 	
 	//metodos obrigatorios (FAZER)
 	
 	public static void main(String[] args) {
+		
+		Scanner scanner = new Scanner(System.in);
 		
 		System.out.println("Bem-vindo ao Sistema de Gerência e Pagamento de funcionários!");
 		System.out.println("");
@@ -105,6 +218,54 @@ public class FolhaDePagamento {
 		
 		//abaixo, o loop para leitura dos comandos que acionam os metodos (FAZER)
 		
+		int comando = 1;
+		
+		while(comando != 0) {
+			
+			System.out.println("\nSelecione a opção desejada:\n");
+			System.out.println("1-Cadastrar funcionário\n2-Remover funcionário\n3-Registrar Cartão de Ponto");
+			System.out.println("4-Registrar Venda Efetuada\n5-Aplicar taxa do Sindicato\n6-Editar cadastro de funcionário");
+			System.out.println("7-Agendar data personalizada de recebimento\n8-Rodar Folha de Pagamento e finalizar o dia\n0-Encerrar\n");	
+			System.out.print("Opção desejada: ");	
+			comando = scanner.nextInt();
+			System.out.println("");
+			
+			switch(comando) {
+				case 1:
+					E = adicionarEmpregado(E);
+					break;
+				case 2:
+					System.out.print("Digite a ID do funcionário que será removido: ");
+					int id = scanner.nextInt();
+					E = removerEmpregado(E, id);
+					break;
+				case 3:
+					//metodo para registrar cartao de ponto
+					break;
+				case 4:
+					//metodo para registrar venda
+					break;
+				case 5:
+					//metodo para associar empregado ou alterar taxa do sindicato
+					break;
+				case 6:
+					//metodo para editar cadastro do empregado
+					break;
+				case 7:
+					//metodo para modificar data de recebimento do empregado (agendar)
+					break;
+				case 8:
+					//metodo para avancar dia e rodar a folha de pagamento
+					break;
+			}
+			
+		}
+		
+		if(scanner != null) {
+			scanner.close();
+		}
+		
+		System.out.println("Obrigado por utilizar esta ferramenta!\n");
 	}
-
 }
+
