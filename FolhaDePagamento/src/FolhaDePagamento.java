@@ -18,7 +18,6 @@ class Empregado {
 	public double impostos; 	//impostos gerais aplicados a todos os empregados
 	
 	public int contadorDeSextas; 	//usado para contar as sextas que se passam ate o comissionado receber
-	
 }
 
 public class FolhaDePagamento {
@@ -35,27 +34,21 @@ public class FolhaDePagamento {
 			case 1:
 				System.out.print("domingo, ");
 				break;
-			
 			case 2:
 				System.out.print("segunda-feira, ");
-				break;
-				
+				break;	
 			case 3:
 				System.out.print("terça-feira, ");
 				break;
-				
 			case 4:
 				System.out.print("quarta-feira, ");
-				break;
-				
+				break;	
 			case 5:
 				System.out.print("quinta-feira, ");
-				break;
-				
+				break;	
 			case 6:
 				System.out.print("sexta-feira, ");
-				break;
-				
+				break;	
 			case 7:
 				System.out.print("sábado, ");
 				break;
@@ -68,29 +61,24 @@ public class FolhaDePagamento {
 		
 		int i, limite = 31, controle = semana;
 		
-		if(mes == 4 || mes == 6 || mes == 9 || mes == 11) {
-			
+		if(mes == 4 || mes == 6 || mes == 9 || mes == 11) {			
 			limite = 30;	//se o mes tiver 30 dias, modifica o limite para o loop abaixo
 		}
 		
-		else if(mes == 2) {
-			
+		else if(mes == 2) {			
 			limite = 28;	//se for fevereiro, caso especial
 		}
 		
-		for(i = dia; i < limite; i++) {
-			
+		for(i = dia; i < limite; i++) {			
 			controle++; 	//incrementa o dia da semana para controle dos dias uteis
 		}
 		
-		while(controle%7 == 0 || controle%7 == 1) { //enquanto o dia da semana for sabado (resto 0) ou domingo (resto 1)
-			
+		while(controle%7 == 0 || controle%7 == 1) { //enquanto o dia da semana for sabado (resto 0) ou domingo (resto 1)			
 			controle--; 	//volta um dia na semana
 			i--; 	//volta um dia do mes
 		}
 		
-		dataDeRecebimento = i;
-		
+		dataDeRecebimento = i;	
 	}
 	
 	static void configuracaoInicial() {
@@ -113,7 +101,6 @@ public class FolhaDePagamento {
 		System.out.println("\nConfiguração concluída com sucesso!\n");
 		
 		dataAtual();
-		
 	}
 	
 	static Empregado[] adicionarEmpregado(Empregado[] vetor) {
@@ -211,8 +198,7 @@ public class FolhaDePagamento {
 		
 		int i;
 		
-		for(i = 0; i < 50; i++) {
-			
+		for(i = 0; i < 50; i++) {		
 			E[i] = new Empregado(); 	//cria instancias para cada vaga disponivel
 		}
 		
@@ -257,8 +243,7 @@ public class FolhaDePagamento {
 				case 8:
 					//metodo para avancar dia e rodar a folha de pagamento
 					break;
-			}
-			
+			}		
 		}
 		
 		if(scanner != null) {
