@@ -1,12 +1,7 @@
 # FolhaDePagamento
 Programa desenvolvido em Java, utilizando a IDE Eclipse Java Neon.2, que representa um sistema de folha de pagamento de funcionários, bem como o gerenciamento dos mesmos.
 
-O programa possui diversas funcionalidades, tais como:
-
--cartão de ponto;
--atribuição de comissões;
--dedução de taxas de impostos;
--sistema de sindicato.
+O programa possui diversas funcionalidades, tais como: cartão de ponto, atribuição de comissões, dedução de taxas de impostos, sistema de sindicato.
 
 Instruções para execução do programa:
 
