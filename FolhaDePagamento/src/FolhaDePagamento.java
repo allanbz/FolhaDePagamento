@@ -135,6 +135,8 @@ public class FolhaDePagamento {
 				vetor[i].salarioHora = scanner.nextInt();
 				break;
 			case 3:
+				System.out.print("Salário do funcionário: ");
+				vetor[i].salarioFixo = scanner.nextInt();
 				System.out.print("Taxa de comissão sobre vendas (em %): ");
 				vetor[i].comissao = scanner.nextInt();
 				break;		
@@ -182,6 +184,66 @@ public class FolhaDePagamento {
 		return vetor;
 	}
 	
+	static Empregado[] registrarPonto(Empregado[] vetor, int id) {
+		
+		System.out.print("\nDigite a quantidade de horas trabalhadas: ");
+		
+		Scanner scanner = new Scanner(System.in);
+		int horas = scanner.nextInt();
+		
+		//se ele trabalhou 8 horas ou menos, guarda salario do dia e retorna
+		if(horas <= 8) {
+			vetor[id].salarioTotal += (horas * vetor[id].salarioHora);
+			return vetor;
+		}
+		
+		//se trabalhou mais, conta as 8, e considera o bonus nas demais horas
+		vetor[id].salarioTotal += (8 * vetor[id].salarioHora);
+		horas-=8;
+		vetor[id].salarioTotal += (horas * 1.5 * vetor[id].salarioHora);
+		
+		System.out.println("\nHoras registradas!");
+		
+		return vetor;
+	}
+	
+	static Empregado[] registrarVenda(Empregado[] vetor, int id) {
+		
+		System.out.print("\nDigite o valor da venda realizada: ");
+		
+		Scanner scanner = new Scanner(System.in);
+		double venda = scanner.nextDouble();
+		
+		vetor[id].salarioTotal += (venda * (vetor[id].comissao/100));
+		
+		System.out.println("\nVenda registrada!");
+		
+		return vetor;
+	}
+	
+	static Empregado[] opcoesSindicato(Empregado[] vetor, int id) {
+		
+		System.out.println("\n1-Associar funcionário (taxa de 8% ao mês)\n2-Modificar taxa de associado");
+		System.out.print("\nOpção desejada: ");
+		
+		Scanner scanner = new Scanner(System.in);
+		int opc = scanner.nextInt();
+		
+		switch(opc) {
+			case 1:
+				vetor[id].taxaSindicato = 8;
+				System.out.println("\nFuncionário associado!");
+				break;
+			case 2:
+				System.out.print("\nNova taxa: ");
+				vetor[id].taxaSindicato = scanner.nextInt();
+				System.out.println("\nTaxa alterada!");
+				break;
+		}
+		
+		return vetor;
+	}
+	
 	//metodos obrigatorios (FAZER)
 	
 	public static void main(String[] args) {
@@ -205,13 +267,14 @@ public class FolhaDePagamento {
 		//abaixo, o loop para leitura dos comandos que acionam os metodos (FAZER)
 		
 		int comando = 1;
+		int id;
 		
 		while(comando != 0) {
 			
 			System.out.println("\nSelecione a opção desejada:\n");
 			System.out.println("1-Cadastrar funcionário\n2-Remover funcionário\n3-Registrar Cartão de Ponto");
-			System.out.println("4-Registrar Venda Efetuada\n5-Aplicar taxa do Sindicato\n6-Editar cadastro de funcionário");
-			System.out.println("7-Agendar data personalizada de recebimento\n8-Rodar Folha de Pagamento e finalizar o dia\n0-Encerrar\n");	
+			System.out.println("4-Registrar Venda Efetuada\n5-Opções do Sindicato\n6-Editar cadastro de funcionário");
+			System.out.println("7-Desfazer/refazer última opção\n8-Rodar Folha de Pagamento e finalizar o dia\n\n0-Encerrar\n");	
 			System.out.print("Opção desejada: ");	
 			comando = scanner.nextInt();
 			System.out.println("");
@@ -222,23 +285,29 @@ public class FolhaDePagamento {
 					break;
 				case 2:
 					System.out.print("Digite a ID do funcionário que será removido: ");
-					int id = scanner.nextInt();
+					id = scanner.nextInt();
 					E = removerEmpregado(E, id);
 					break;
 				case 3:
-					//metodo para registrar cartao de ponto
+					System.out.print("Digite a ID do funcionário: ");
+					id = scanner.nextInt();
+					E = registrarPonto(E, id);
 					break;
 				case 4:
-					//metodo para registrar venda
+					System.out.print("Digite a ID do funcionário: ");
+					id = scanner.nextInt();
+					E = registrarVenda(E, id);
 					break;
 				case 5:
-					//metodo para associar empregado ou alterar taxa do sindicato
+					System.out.print("Digite a ID do funcionário: ");
+					id = scanner.nextInt();
+					E = opcoesSindicato(E, id);
 					break;
 				case 6:
 					//metodo para editar cadastro do empregado
 					break;
 				case 7:
-					//metodo para modificar data de recebimento do empregado (agendar)
+					//metodo para fazer undo/redo
 					break;
 				case 8:
 					//metodo para avancar dia e rodar a folha de pagamento
