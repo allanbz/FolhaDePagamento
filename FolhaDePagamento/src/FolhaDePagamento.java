@@ -18,7 +18,7 @@ class Empregado {
 	public double taxaSindicato; 	//se o empregado for associado ao sindicato, este atributo sera diferente de zero
 	public double impostos; 	//impostos gerais aplicados a todos os empregados
 	
-	public int contadorDeSextas; 	//usado para contar as sextas que se passam ate o comissionado receber
+	public int contadorDeSextas; 	//usado para contar as sextas que se passam ate o bi-semanal receber
 }
 
 public class FolhaDePagamento {
@@ -28,7 +28,7 @@ public class FolhaDePagamento {
 	static int maxDeFuncionarios;
 	
 	static void dataAtual() {
-		System.out.print("Data atual: ");
+		System.out.print("\nData atual: ");
 		
 		switch(semana) {
 			case 1:
@@ -56,7 +56,7 @@ public class FolhaDePagamento {
 		
 		System.out.printf("%d/%d/%d\n", dia, mes, ano);
 	}
-	
+		
 	static void ultimoDiaUtil() {
 		
 		int i, limite = 31, controle = semana;
@@ -80,6 +80,45 @@ public class FolhaDePagamento {
 		
 		dataDeRecebimento = i;	
 	}
+
+	static void avancarDia() {
+		
+		semana++;
+		if(semana == 8) {
+			semana = 1;
+		}
+		
+		dia++;
+		if(mes == 4 || mes == 6 || mes == 9 || mes == 11) {			
+			if(dia == 31) {
+				dia = 1; //se o mes tiver 30 dias, e o dia chegar em 31, reseta
+				mes++; //avanca um mes
+			}
+		}
+		
+		else if(mes == 2) {			
+			if(dia == 29) {
+				dia = 1; //se for fevereiro, e o dia chegar em 29, reseta
+				mes++; //avanca um mes
+			}
+		}
+		
+		else {
+			if(dia == 32) {
+				dia = 1; //se o mes tiver 31 dias, e o dia chegar em 32, reseta
+				mes++; //avanca um mes
+			}
+		}
+		
+		if(mes == 13) {
+			mes = 1; //ano novo :)
+			ano++;
+		}
+		
+		if(dia == 1) {
+			ultimoDiaUtil(); //se estiver no inicio do mes, procura o ultimo dia util do mesmo
+		}
+	}
 	
 	static void configuracaoInicial() {
 		
@@ -101,9 +140,8 @@ public class FolhaDePagamento {
 		System.out.print("\nNúmero máximo de funcionários que pretende adicionar: ");
 		maxDeFuncionarios = scanner.nextInt();
 		
-		System.out.println("\nConfiguração concluída com sucesso!\n");
+		System.out.println("\nConfiguração concluída com sucesso!");
 		
-		dataAtual();
 	}
 	
 	static void entregaDinheiro(int pagamento, String nome, String endereco, double valor) {
@@ -399,7 +437,18 @@ public class FolhaDePagamento {
 		return vetor;
 	}
 
-	//metodo para contar sextas, avancar dia e rodar pagamento (FAZER)
+	static Empregado[] contarSexta(Empregado[] vetor) {
+		
+		for(int i = 0; i < maxDeFuncionarios; i++) {
+			if(vetor[i].agenda == 3) {
+				vetor[i].contadorDeSextas++;
+			}
+		}
+		
+		return vetor;
+	}
+	
+	//metodo para avancar dia e rodar pagamento (FAZER)
 	
 	public static void main(String[] args) {
 		
@@ -428,6 +477,7 @@ public class FolhaDePagamento {
 		
 		while(comando != 0) {
 			
+			dataAtual();
 			System.out.println("\nSelecione a opção desejada:\n");
 			System.out.println("1-Cadastrar funcionário\n2-Remover funcionário\n3-Registrar Cartão de Ponto");
 			System.out.println("4-Registrar Venda Efetuada\n5-Opções do Sindicato\n6-Editar cadastro de funcionário");
@@ -437,7 +487,7 @@ public class FolhaDePagamento {
 			System.out.println("");
 			
 			if(comando != 9 && comando!= 0) {
-				backupDados(E, Backup);
+				backupDados(E, Backup); //se o usuario nao escolher 'undo', fazemos backup dos dados
 			}
 			
 			switch(comando) {
@@ -480,6 +530,16 @@ public class FolhaDePagamento {
 					break;
 				case 8:
 					//metodo para avancar dia e rodar folha
+					if(semana == 6) {
+						E = contarSexta(E); //se for sexta-feira, conta para quem recebe bi-semanalmente
+						E = pagamentoSexta(E); //paga quem recebe semanalmente e bi-semanalmente
+					}
+					
+					if(dia == dataDeRecebimento) {
+						E = pagamentoMensal(E); //se for o ultimo dia util do mes, paga quem recebe mensalmente
+					}	
+					
+					avancarDia(); //proximo dia
 					break;
 				case 9:
 					recuperarBackup(E, Backup);
