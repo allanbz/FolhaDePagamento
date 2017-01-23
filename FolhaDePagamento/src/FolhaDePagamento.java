@@ -25,7 +25,7 @@ public class FolhaDePagamento {
 
 	static int dia, mes, ano, semana; 	//guarda a data atual no sistema de funcionarios
 	static int dataDeRecebimento; 	//guarda a data na qual os assalariados receberao (ultimo dia util do mes)
-	static int maxDeFuncionarios;
+	static int maxDeFuncionarios;	//guarda o numero maximo de funcionarios para controle na adicao
 	
 	static void dataAtual() {
 		System.out.print("\nData atual: ");
@@ -66,7 +66,7 @@ public class FolhaDePagamento {
 		}
 		
 		else if(mes == 2) {			
-			limite = 28;	//se for fevereiro, caso especial
+			limite = 28;	//se for fevereiro, caso especial (28 dias)
 		}
 		
 		for(i = dia; i < limite; i++) {			
@@ -168,7 +168,7 @@ public class FolhaDePagamento {
 			i++;
 		}
 		
-		if(i == 50) {
+		if(i == maxDeFuncionarios) {
 			System.out.println("Não há vagas!");
 			return vetor;
 		}
@@ -325,7 +325,22 @@ public class FolhaDePagamento {
 		return copia;
 	}
 
-	static Empregado[] recuperarBackup(Empregado[] vetor, Empregado[] copia) {
+	static Empregado[] recuperarBackup(Empregado[] vetor, Empregado[] copia, Empregado[] reserva) {
+		
+		for(int i = 0; i < maxDeFuncionarios; i++) { //guarda estado atual para possivel 'redo'
+			reserva[i].nome = vetor[i].nome;
+			reserva[i].endereco = vetor[i].endereco;
+			reserva[i].tipo = vetor[i].tipo;
+			reserva[i].agenda = vetor[i].agenda;
+			reserva[i].recebimento = vetor[i].recebimento;
+			reserva[i].salarioFixo = vetor[i].salarioFixo;
+			reserva[i].salarioHora = vetor[i].salarioHora;
+			reserva[i].comissao = vetor[i].comissao;
+			reserva[i].salarioTotal = vetor[i].salarioTotal;
+			reserva[i].taxaSindicato = vetor[i].taxaSindicato;
+			reserva[i].impostos = vetor[i].impostos;
+			reserva[i].contadorDeSextas = vetor[i].contadorDeSextas;	
+		}
 		
 		for(int i = 0; i < maxDeFuncionarios; i++) {
 			vetor[i].nome = copia[i].nome;
@@ -347,6 +362,26 @@ public class FolhaDePagamento {
 		return vetor;
 	}
 	
+	static Empregado[] refazer(Empregado[] vetor, Empregado[] reserva) {
+		
+		for(int i = 0; i < maxDeFuncionarios; i++) {
+			vetor[i].nome = reserva[i].nome;
+			vetor[i].endereco = reserva[i].endereco;
+			vetor[i].tipo = reserva[i].tipo;
+			vetor[i].agenda = reserva[i].agenda;
+			vetor[i].recebimento = reserva[i].recebimento;
+			vetor[i].salarioFixo = reserva[i].salarioFixo;
+			vetor[i].salarioHora = reserva[i].salarioHora;
+			vetor[i].comissao = reserva[i].comissao;
+			vetor[i].salarioTotal = reserva[i].salarioTotal;
+			vetor[i].taxaSindicato = reserva[i].taxaSindicato;
+			vetor[i].impostos = reserva[i].impostos;
+			vetor[i].contadorDeSextas = reserva[i].contadorDeSextas;	
+		}
+		
+		return vetor;
+	}
+	
 	static Empregado[] alterarAgenda(Empregado[] vetor, int id) {
 		
 		System.out.print("\nAgenda de Recebimento desejada (1-Mensalmente /2-Semanalmente /3-Bi-semanalmente): ");
@@ -362,8 +397,7 @@ public class FolhaDePagamento {
 	static Empregado[] pagamentoMensal(Empregado[] vetor) {
 		
 		for(int i = 0; i < maxDeFuncionarios; i++) {
-			if(vetor[i].agenda == 1) {
-				
+			if(vetor[i].agenda == 1) {	
 				//concede o pagamento de acordo com a condicao do empregado (assalariado, horista ou comissionado)
 				switch(vetor[i].tipo) {
 					case 1:
@@ -390,7 +424,7 @@ public class FolhaDePagamento {
 	static Empregado[] pagamentoSexta(Empregado[] vetor) {
 		
 		for(int i = 0; i < maxDeFuncionarios; i++) {
-			if(vetor[i].agenda == 2) {
+			if(vetor[i].agenda == 2) { //se o funcionario recebe semanalmente, paga
 				switch(vetor[i].tipo) {
 					case 1:
 						vetor[i].salarioTotal = vetor[i].salarioFixo;
@@ -410,7 +444,7 @@ public class FolhaDePagamento {
 				vetor[i].salarioTotal = 0;
 			}
 			
-			else if(vetor[i].agenda == 3) {
+			else if(vetor[i].agenda == 3) { //se ele recebe bi-semanalmente, verifica se ja se passaram duas sextas para ele
 				if(vetor[i].contadorDeSextas == 2)	{
 					switch(vetor[i].tipo) {
 						case 1:
@@ -441,15 +475,13 @@ public class FolhaDePagamento {
 		
 		for(int i = 0; i < maxDeFuncionarios; i++) {
 			if(vetor[i].agenda == 3) {
-				vetor[i].contadorDeSextas++;
+				vetor[i].contadorDeSextas++; //se o funcionario recebe bi-semanalmente, conta a sexta para ele
 			}
 		}
 		
 		return vetor;
 	}
-	
-	//metodo para avancar dia e rodar pagamento (FAZER)
-	
+		
 	public static void main(String[] args) {
 		
 		Scanner scanner = new Scanner(System.in);
@@ -461,13 +493,15 @@ public class FolhaDePagamento {
 		ultimoDiaUtil(); 	//metodo para definir o ultimo dia util do mes atual
 		
 		Empregado[] E = new Empregado[maxDeFuncionarios]; 	//vetor que guarda os dados gerais dos funcionarios
-		Empregado[] Backup = new Empregado[maxDeFuncionarios];  //vetor de backup para ser usado no 'undo'
+		Empregado[] Undo = new Empregado[maxDeFuncionarios];  //vetor de backup para ser usado no 'undo'
+		Empregado[] Redo = new Empregado[maxDeFuncionarios];  //vetor de backup para ser usado no 'redo'
 		
 		int i;
 		
 		for(i = 0; i < maxDeFuncionarios; i++) {				
-			E[i] = new Empregado(); 	//cria instancias para cada vaga disponivel
-			Backup[i] = new Empregado();
+			E[i] = new Empregado();
+			Undo[i] = new Empregado();
+			Redo[i] = new Empregado();
 		}
 		
 		//abaixo, o loop para leitura dos comandos que acionam os metodos
@@ -481,13 +515,14 @@ public class FolhaDePagamento {
 			System.out.println("\nSelecione a opção desejada:\n");
 			System.out.println("1-Cadastrar funcionário\n2-Remover funcionário\n3-Registrar Cartão de Ponto");
 			System.out.println("4-Registrar Venda Efetuada\n5-Opções do Sindicato\n6-Editar cadastro de funcionário");
-			System.out.println("7-Alterar agenda de recebimento\n8-Rodar Folha de Pagamento e finalizar o dia\n9-Desfazer última alteração\n\n0-Encerrar\n");	
+			System.out.println("7-Alterar agenda de recebimento\n8-Rodar Folha de Pagamento e finalizar o dia\n9-Desfazer última alteração");
+			System.out.println("10-Refazer alteração\n\n0-Encerrar\n");
 			System.out.print("Opção desejada: ");	
 			comando = scanner.nextInt();
 			System.out.println("");
 			
 			if(comando != 9 && comando!= 0) {
-				backupDados(E, Backup); //se o usuario nao escolher 'undo', fazemos backup dos dados
+				backupDados(E, Undo); //se o usuario nao escolher 'undo', fazemos backup dos dados
 			}
 			
 			switch(comando) {
@@ -529,7 +564,6 @@ public class FolhaDePagamento {
 					E = alterarAgenda(E, id);
 					break;
 				case 8:
-					//metodo para avancar dia e rodar folha
 					if(semana == 6) {
 						E = contarSexta(E); //se for sexta-feira, conta para quem recebe bi-semanalmente
 						E = pagamentoSexta(E); //paga quem recebe semanalmente e bi-semanalmente
@@ -539,12 +573,15 @@ public class FolhaDePagamento {
 						E = pagamentoMensal(E); //se for o ultimo dia util do mes, paga quem recebe mensalmente
 					}	
 					
-					avancarDia(); //proximo dia
+					avancarDia();
 					break;
 				case 9:
-					recuperarBackup(E, Backup);
+					E = recuperarBackup(E, Undo, Redo);
 					break;
-			}		
+				case 10:
+					E = refazer(E, Redo);
+					break;	
+			}
 		}
 		
 		if(scanner != null) {
@@ -554,4 +591,3 @@ public class FolhaDePagamento {
 		System.out.println("Obrigado por utilizar esta ferramenta!\n");
 	}
 }
-
