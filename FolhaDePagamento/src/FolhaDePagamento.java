@@ -159,6 +159,15 @@ public class FolhaDePagamento {
 				break;
 		}
 	}
+
+	static void relatorioFuncionarios(Empregado[] vetor) {
+		
+		for(int i = 0; i < maxDeFuncionarios; i++) {
+			if(vetor[i].nome != null) { //imprime apenas os funcionarios existentes
+				System.out.printf("ID [%d] - %s\n", i, vetor[i].nome);
+			}
+		}
+	}
 	
 	static Empregado[] adicionarEmpregado(Empregado[] vetor) {
 		
@@ -511,18 +520,19 @@ public class FolhaDePagamento {
 		
 		while(comando != 0) {
 			
+			System.out.print("\n***********************************");
 			dataAtual();
 			System.out.println("\nSelecione a opção desejada:\n");
 			System.out.println("1-Cadastrar funcionário\n2-Remover funcionário\n3-Registrar Cartão de Ponto");
 			System.out.println("4-Registrar Venda Efetuada\n5-Opções do Sindicato\n6-Editar cadastro de funcionário");
-			System.out.println("7-Alterar agenda de recebimento\n8-Rodar Folha de Pagamento e finalizar o dia\n9-Desfazer última alteração");
-			System.out.println("10-Refazer alteração\n\n0-Encerrar\n");
+			System.out.println("7-Alterar agenda de recebimento\n8-Rodar Folha de Pagamento e finalizar o dia");
+			System.out.println("9-Imprimir relatório de Funcionários\n10-Desfazer última alteração\n11-Refazer alteração\n\n0-Encerrar\n");
 			System.out.print("Opção desejada: ");	
 			comando = scanner.nextInt();
 			System.out.println("");
 			
-			if(comando != 9 && comando!= 0) {
-				backupDados(E, Undo); //se o usuario nao escolher 'undo', fazemos backup dos dados
+			if(comando != 9 && comando != 10) {
+				backupDados(E, Undo); //se o usuario nao escolher 'imprimir' ou 'undo', fazemos backup dos dados
 			}
 			
 			switch(comando) {
@@ -576,9 +586,12 @@ public class FolhaDePagamento {
 					avancarDia();
 					break;
 				case 9:
-					E = recuperarBackup(E, Undo, Redo);
+					relatorioFuncionarios(E);
 					break;
 				case 10:
+					E = recuperarBackup(E, Undo, Redo);
+					break;
+				case 11:
 					E = refazer(E, Redo);
 					break;	
 			}
